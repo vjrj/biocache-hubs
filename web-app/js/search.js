@@ -180,9 +180,18 @@ $(document).ready(function() {
         //Check user has selected at least 1 facet
         if (selectedFacets.length > 0) {
             // save facets to the user_facets cookie
-            $.cookie("user_facets", selectedFacets, { expires: 7 });
-            // reload page
-            document.location.reload(true);
+            $.post(BC_CONF.serverName + "/user/setProperty",
+                //encode facets value to match cookie contents when retrieved.
+                { name: 'user_facets', value: encodeURIComponent(selectedFacets.join(',')) },
+                function(data) {
+                    //successful
+                }
+            ).error(function (request, status, error) {
+                $.cookie("user_facets", selectedFacets, { expires: 7 });
+            }).always(function() {
+                // reload page
+                document.location.reload(true);
+            })
         } else {
             alert("Please select at least 1 filter category to display");
         }
@@ -193,23 +202,43 @@ $(document).ready(function() {
     $("#resetFacetOptions").click(function(e) {
         e.preventDefault();
         $.removeCookie('user_facets');
-        document.location.reload(true);
+        $.post(BC_CONF.serverName + "/user/setProperty",
+            //encode facets value to match cookie contents when retrieved.
+            { name: 'user_facets', value: '' },
+            function(data) {
+                //successful
+            }
+        ).always(function() {
+            // reload page
+            document.location.reload(true);
+        })
     });
 
     // load stored prefs from cookie
-    var userFacets = $.cookie("user_facets");
-    if (userFacets) {
-        $(":input.facetOpts").removeAttr("checked");
-        var facetList = userFacets.split(",");
-        for (i in facetList) {
-            if (typeof facetList[i] === "string") {
-                var thisFacet = facetList[i];
-                //console.log("thisFacet", thisFacet);
-                $(":input.facetOpts[value='"+thisFacet+"']").attr("checked","checked");
+    var userFacets
+    $.get(BC_CONF.serverName + "/user/getProperty",
+        //encode facets value to match cookie contents when retrieved.
+        { name: 'user_facets' },
+        function(data) {
+            //successful
+            userFacets = decodeURIComponent(data)
+        }
+    ).error(function (request, status, error) {
+        userFacets = $.cookie("user_facets");
+    }).always(function() {
+        if (userFacets) {
+            $(":input.facetOpts").removeAttr("checked");
+            var facetList = userFacets.split(",");
+            for (i in facetList) {
+                if (typeof facetList[i] === "string") {
+                    var thisFacet = facetList[i];
+                    //console.log("thisFacet", thisFacet);
+                    $(":input.facetOpts[value='"+thisFacet+"']").attr("checked","checked");
+                }
             }
         }
-    } //  note removed else that did page refresh by triggering cookie update code.
-
+    })
+    
     // select all and none buttons
     $("a#selectNone").click(function(e) {
         e.preventDefault();

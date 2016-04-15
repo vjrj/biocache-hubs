@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest
  */
 class PostProcessingService {
     def grailsApplication
+    def authService
+    def userService
+    def webServicesService
 
     /**
      * Determine if the record contains images
@@ -185,26 +188,59 @@ class PostProcessingService {
      * @param request
      * @return
      */
-   def String[] getFacetsFromCookie(HttpServletRequest request) {
+    def String[] getFacetsFromCookie(HttpServletRequest request) {
+        getUserFacets(request, false)
+    }
+
+    /**
+     * Read the user_facets from userService when logged in or from request cookie to determine which facets are active
+     *
+     * @param request
+     * @return
+     */
+    def String[] getUserFacets(HttpServletRequest request, boolean useUserService = true) {
 
         String userFacets = null
         String[] facets = null
-        String rawCookie = getCookieValue(request.getCookies(), "user_facets", null)
+        String rawCookie
+
+        //authService may not be defined in the hub
+        if (authService && useUserService && grailsApplication.config?.userdetails?.baseUrl) {
+            def userId = authService.getUserId()
+            if (userId) {
+                rawCookie = userService.getUserProperty(userId, 'user_facets')
+            } else {
+                rawCookie = getCookieValue(request.getCookies(), 'user_facets', null)
+            }
+        } else {
+            rawCookie = getCookieValue(request.getCookies(), 'user_facets', null)
+        }
 
         if (rawCookie) {
             try {
-                userFacets = URLDecoder.decode(rawCookie, "UTF-8")
+                userFacets = URLDecoder.decode(rawCookie, 'UTF-8')
             } catch (UnsupportedEncodingException ex) {
                 log.error(ex.getMessage(), ex)
             }
 
             if (!StringUtils.isBlank(userFacets)) {
-                facets = userFacets.split(",")
+                List rawFacets = userFacets.split(",")
+
+                //find valid facets
+                List validFacets = []
+                rawFacets.findAll { facet ->
+                    webServicesService.getGroupedFacets().each {
+                        if (it.value.contains(facet)) {
+                            validFacets.add(facet)
+                        }
+                    }
+                }
+                facets = validFacets.toArray()
             }
         }
 
         return facets
-   }
+    }
 
     /**
      * Utility method for getting a named cookie value from the HttpServletRepsonse cookies array

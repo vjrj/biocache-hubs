@@ -57,6 +57,8 @@ biocache.ajax.useProxy = false
 collections.baseUrl = "http://collections.ala.org.au"
 useDownloadPlugin = ""
 
+userdetails.baseUrl = "https://auth.ala.org.au/userdetails"
+
 // images
 images.baseUrl = "http://images.ala.org.au"
 images.viewerUrl = "http://images.ala.org.au/image/viewer?imageId="

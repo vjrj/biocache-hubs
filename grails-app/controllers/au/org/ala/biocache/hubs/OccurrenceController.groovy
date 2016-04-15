@@ -86,7 +86,7 @@ class OccurrenceController {
             Map configuredGroupedFacets = webServicesService.getGroupedFacets()
             List listOfGroupedFacets = postProcessingService.getListFromGroupedFacets(configuredGroupedFacets)
             Map defaultFacets = postProcessingService.getAllFacets(listOfGroupedFacets)
-            String[] userFacets = postProcessingService.getFacetsFromCookie(request)
+            String[] userFacets = postProcessingService.getUserFacets(request)
             String[] filteredFacets = postProcessingService.getFilteredFacets(defaultFacets)
 
             List dynamicFacets = []
