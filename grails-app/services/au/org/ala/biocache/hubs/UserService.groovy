@@ -42,7 +42,7 @@ class UserService {
                 value = resp[0]?.value
             }
         } catch (err) {
-            log.error("failed to get user property ${userid}:${property}")
+            log.error("failed to get user property ${userid}:${property}", err)
         }
 
         value
@@ -55,7 +55,7 @@ class UserService {
                     '&name=' + URLEncoder.encode(grails.util.Metadata.current.'app.name' + '.' + property, "UTF-8") +
                     '&value=' + URLEncoder.encode(value, "UTF-8"), '')
         } catch (err) {
-            log.error("failed to set user property ${userid}:${property}:${value}")
+            log.error("failed to set user property ${userid}:${property}:${value}", err)
         }
     }
 }

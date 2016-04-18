@@ -186,9 +186,9 @@ $(document).ready(function() {
                 function(data) {
                     //successful
                 }
-            ).error(function (request, status, error) {
+            ).always(function() {
                 $.cookie("user_facets", selectedFacets, { expires: 7 });
-            }).always(function() {
+
                 // reload page
                 document.location.reload(true);
             })
