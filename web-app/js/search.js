@@ -844,7 +844,7 @@ function loadAllCharts() {
         displayRecordsUrl: BC_CONF.serverName
     };
 
-    if(dynamicFacets !== undefined){
+    if(dynamicFacets !== undefined && dynamicFacets.length > 0){
         var chartsConfigUri = BC_CONF.biocacheServiceUrl + "/upload/charts/" + BC_CONF.selectedDataResource + ".json";
         $.getJSON(chartsConfigUri, function(chartsConfig) {
 
@@ -864,7 +864,7 @@ function loadAllCharts() {
             loadFacetCharts(facetChartOptions);
         });
     } else {
-        loadFacetCharts(facetChartOptions);
+        loadAndDrawFacetCharts(facetChartOptions);
     }
     taxonomyChart.load(taxonomyChartOptions);
 }
