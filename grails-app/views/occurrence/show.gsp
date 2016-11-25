@@ -66,7 +66,6 @@
 
 
     </script>
-    <g:render template="/layouts/global"/>
     <r:require modules="show, amplify, moment"/>
     <r:script disposition="head">
 

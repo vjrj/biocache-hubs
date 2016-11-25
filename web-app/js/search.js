@@ -826,7 +826,8 @@ function loadAllCharts() {
         biocacheServicesUrl: biocacheServiceUrl,
         displayRecordsUrl: BC_CONF.serverName
     };
-    
+
+    // set the default config
     var facetChartOptions = {
         query: queryString,
         charts: ['collection_uid','state','species_group','assertions','type_status','ibra','state_conservation','month','occurrence_year'],
@@ -840,9 +841,15 @@ function loadAllCharts() {
         occurrence_year:{},
         Unknown_s:{},
         month:{chartType: "column"},
-        biocacheServicesUrl: biocacheServiceUrl,
+        biocacheServicesUrl: BC_CONF.biocacheServiceUrl,
         displayRecordsUrl: BC_CONF.serverName
     };
+
+    if(BC_CONF.facetChartOptions !== undefined){
+        facetChartOptions = BC_CONF.facetChartOptions;
+    }
+
+    //BC_CONF.facetChartOptions.query = BC_CONF.facetChartOptions.query.replace("?q=","");
 
     if(dynamicFacets !== undefined && dynamicFacets.length > 0){
         var chartsConfigUri = BC_CONF.biocacheServiceUrl + "/upload/charts/" + BC_CONF.selectedDataResource + ".json";
@@ -864,6 +871,7 @@ function loadAllCharts() {
             loadFacetCharts(facetChartOptions);
         });
     } else {
+        console.log(facetChartOptions);
         loadAndDrawFacetCharts(facetChartOptions);
     }
     taxonomyChart.load(taxonomyChartOptions);

@@ -551,7 +551,7 @@ var facetChartGroup = {
             facetNames = dataOptions.facets;
         }
 
-        return '&facets=' + facetNames.join('&facets=');
+        return '&facets=' + facetNames.join(',');
     },
     // create a set of facets charts - requesting the data
     loadAndDrawFacetCharts: function (options) {
@@ -574,9 +574,11 @@ var facetChartGroup = {
         // show a message while requesting data
         chartsDiv.append($("<span>Loading charts...</span>"));
 
+        var chartUrl = urlConcat(url, "/occurrences/search.json?pageSize=0&flimit=1000&q=") + options.query + facets + "&fsort=index";
+
         // make request
         $.ajax({
-            url: urlConcat(url, "/occurrences/search.json?pageSize=0&flimit=200&q=") + options.query + facets + "&fsort=index",
+            url: chartUrl,
             dataType: 'jsonp',
             error: function() {
                 cleanUp(); // TODO:
@@ -638,7 +640,7 @@ var loadAndDrawFacetCharts = function (options) {
     var url = (options.biocacheServicesUrl == undefined) ? baseFacetChart.biocacheServicesUrl : options.biocacheServicesUrl,
 
     // build the required facet set
-        facets = options.charts.join('&facets='),
+        facets = "&facets=" + options.charts.join(','),
 
     // calc the target div
         chartsDiv = $('#' + (options.chartsDiv ? options.chartsDiv : baseFacetChart.chartsDiv));
@@ -646,9 +648,11 @@ var loadAndDrawFacetCharts = function (options) {
     // show a message while requesting data
     chartsDiv.append($("<span>Loading charts...</span>"));
 
+    var url = urlConcat(url, "/occurrences/search.json?pageSize=0&flimit=-1&q=") + options.query + facets + "&fsort=index";
+
     // make request
     $.ajax({
-        url: urlConcat(url, "/occurrences/search.json?pageSize=0&q=") + options.query + "&facets=" + facets + "&fsort=index",
+        url: url,
         dataType: 'jsonp',
         error: function() {
             cleanUp(); // TODO:
@@ -748,12 +752,9 @@ function loadFacetCharts(chartOptions) {
     var chartsDiv = $('#' + (chartOptions.targetDivId ? chartOptions.targetDivId : 'charts'));
     chartsDiv.append($("<span>Loading charts...</span>"));
 
-    console.log('loadFacetCharts');
-    console.log(chartOptions);
-
     var query = chartOptions.query ? chartOptions.query : buildQueryString(chartOptions.instanceUid);
     $.ajax({
-        url: urlConcat(biocacheServicesUrl, "/occurrences/search.json?pageSize=0&q=") + query + "&fsort=index",
+        url: urlConcat(biocacheServicesUrl, "/occurrences/search.json?flimit=-1&pageSize=0&q=") + query + "&fsort=index",
         dataType: 'jsonp',
         error: function() {
             cleanUp();
@@ -859,9 +860,6 @@ function buildGenericFacetChart(name, data, query, chartsDiv, chartOptions) {
 
     // specify the type (for css tweaking)
     $container.addClass('chart-' + opts.chartType);
-
-    console.log('Loading chart');
-    console.log(opts);
 
     // create the chart
     var chart;
