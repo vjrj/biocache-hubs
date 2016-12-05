@@ -353,26 +353,26 @@ $(document).ready(function() {
         e.preventDefault();
         window.location.href = BC_CONF.contextPath + "/occurrences/" + $(this).attr("id");
     }).hover(function(){
-            // mouse in
-            $(this).css('cursor','pointer');
-            $(this).css('background-color','#FFF');
-        }, function() {
-            // mouse out
-            $(this).css('cursor','default');
-            $(this).css('background-color','transparent');
+        // mouse in
+        $(this).css('cursor','pointer');
+        $(this).css('background-color','#FFF');
+    }, function() {
+        // mouse out
+        $(this).css('cursor','default');
+        $(this).css('background-color','transparent');
     });
 
     $('.multipleFacetsLink').click(function() {
         var link = this;
         var facetName = link.id.
-            replace("multi-", "").
-            replace("_guid", "").
-            replace("_uid", "_name").
-            replace("data_resource_name", "data_resource_uid").
-            replace("data_provider_name", "data_provider_uid").
-            replace("species_list_name", "species_list_uid").
-            //replace(/(_[id])$/, "$1_RNG").
-            replace("occurrence_year", "decade");
+        replace("multi-", "").
+        replace("_guid", "").
+        replace("_uid", "_name").
+        replace("data_resource_name", "data_resource_uid").
+        replace("data_provider_name", "data_provider_uid").
+        replace("species_list_name", "species_list_uid").
+        //replace(/(_[id])$/, "$1_RNG").
+        replace("occurrence_year", "decade");
 
         var displayName = $(link).data("displayname");
         //console.log(facetName, displayName);
@@ -592,7 +592,7 @@ $(document).ready(function() {
         var flagIssueLink = '<a href="RECORD_URL">record.</a>';
         flagIssueLink = flagIssueLink.replace('RECORD_URL', recordUrl);
         attribution += '<br>' + recordLink +
-                       '<br><br>If this image is incorrectly<br>identified please flag an<br>issue on the ' + flagIssueLink +'<br>';
+            '<br><br>If this image is incorrectly<br>identified please flag an<br>issue on the ' + flagIssueLink +'<br>';
         setDialogSize();
         $('#imageDialog').modal('show');
     });
@@ -674,13 +674,13 @@ function reloadWithParam(paramName, paramValue) {
     if (paramName != null && paramValue != null) {
         paramList.push(paramName + "=" +paramValue);
     }
-    
+
     if (lat && lon && rad) {
         paramList.push("lat=" + lat);
         paramList.push("lon=" + lon);
         paramList.push("radius=" + rad);
     }
-    
+
     if (taxa) {
         paramList.push("taxa=" + taxa);
     }
@@ -713,13 +713,13 @@ function removeFacet(el) {
     }
 
     //console.log("1. fqList", fqList);
-    
+
     if (lat && lon && rad) {
         paramList.push("lat=" + lat);
         paramList.push("lon=" + lon);
         paramList.push("radius=" + rad);
     }
-    
+
     if (taxa) {
         paramList.push("taxa=" + taxa);
     }
@@ -810,7 +810,7 @@ function removeFilter(el) {
 }
 
 /**
- * Load all the charts 
+ * Load all the charts
  */
 function loadAllCharts() {
     // set baseURls...
@@ -818,9 +818,9 @@ function loadAllCharts() {
     baseFacetChart.collectionsUrl = BC_CONF.collectoryUrl;
     baseFacetChart.biocacheWebappUrl = ""; // keep empty so URLs come from the same host
     //console.log("Loading charts.....");
-    var queryString = BC_CONF.searchString.replace("?q=","");
+    var queryString = BC_CONF.searchString.replace("?q=","q=");
     var biocacheServiceUrl = BC_CONF.biocacheServiceUrl; //BC_CONF.biocacheServiceUrl, // "http://ala-macropus.it.csiro.au/biocache-service";
-    
+
     var taxonomyChartOptions = {
         query: queryString,
         biocacheServicesUrl: biocacheServiceUrl,
@@ -849,6 +849,8 @@ function loadAllCharts() {
         facetChartOptions = BC_CONF.facetChartOptions;
     }
 
+    facetChartOptions.query = facetChartOptions.query.replace("?q=","q=");
+
     //BC_CONF.facetChartOptions.query = BC_CONF.facetChartOptions.query.replace("?q=","");
 
     if(dynamicFacets !== undefined && dynamicFacets.length > 0){
@@ -856,17 +858,17 @@ function loadAllCharts() {
         $.getJSON(chartsConfigUri, function(chartsConfig) {
 
             $.each(chartsConfig, function(index, config){
-               if(config.visible) {
-                   facetChartOptions.query = facetChartOptions.query + "&facets=" + config.field;
-                   facetChartOptions.charts.push(config.field);
+                if(config.visible) {
+                    facetChartOptions.query = facetChartOptions.query + "&facets=" + config.field;
+                    facetChartOptions.charts.push(config.field);
 
-                   var chartTitle = config.field.substring(0, config.field.length - 2).replace('_', ' ');
-                   facetChartOptions[config.field] = {chartType:config.format, width: 900, backgroundColor: {fill:'transparent'}, chartArea: {width: "80%"}, hAxis: {title: chartTitle}};
+                    var chartTitle = config.field.substring(0, config.field.length - 2).replace('_', ' ');
+                    facetChartOptions[config.field] = {chartType:config.format, width: 900, backgroundColor: {fill:'transparent'}, chartArea: {width: "80%"}, hAxis: {title: chartTitle}};
 
-                   chartLabels[config.field] = chartTitle;
-                   defaultChartTypes[config.field] = config.format;
-                   baseFacetChart.individualChartOptions[config.field] = {title: chartTitle, chartType:config.format, facets: [config.field]}
-               }
+                    chartLabels[config.field] = chartTitle;
+                    defaultChartTypes[config.field] = config.format;
+                    baseFacetChart.individualChartOptions[config.field] = {title: chartTitle, chartType:config.format, facets: [config.field]}
+                }
             });
             loadFacetCharts(facetChartOptions);
         });
@@ -1021,7 +1023,7 @@ function loadSpeciesInTab(start, sortField, group) {
     }
 
     var speciesJsonUrl = BC_CONF.contextPath + "/proxy/exploreGroupWithGallery" + BC_CONF.searchString + // TODO fix proxy
-            "&group=" + group + "&pageSize=" + pageSize + "&start=" + start + sortExtras;
+        "&group=" + group + "&pageSize=" + pageSize + "&start=" + start + sortExtras;
 
     $.getJSON(speciesJsonUrl, function(data) {
         //console.log("data", data);
@@ -1063,17 +1065,17 @@ function loadSpeciesInTab(start, sortField, group) {
 
         }
     }).error(function (request, status, error) {
-            alert(request.responseText);
+        alert(request.responseText);
     }).complete(function() {
-            $("#loadingSpecies").remove();
-            $("#loadMoreSpecies img").hide();
+        $("#loadingSpecies").remove();
+        $("#loadMoreSpecies img").hide();
     });
 }
 
 /**
  * iBox Jquery plugin for Google Images hover effect.
  * Origina by roxon http://stackoverflow.com/users/383904/roxon
- * Posted to stack overflow: 
+ * Posted to stack overflow:
  *   http://stackoverflow.com/questions/7411393/pop-images-like-google-images/7412302#7412302
  */
 (function($) {
@@ -1132,7 +1134,7 @@ function loadSpeciesInTab(start, sortField, group) {
                     e.preventDefault();
                     window.location.href = link;
                 });
-                
+
                 ibox.css({
                     top: elY + 'px',
                     left: elX + 'px',
@@ -1143,7 +1145,7 @@ function loadSpeciesInTab(start, sortField, group) {
                     //$(this).animate({top: '-='+(resize/2), left:'-='+wh},200).children('img').animate({height:'+='+resize},200);
                     $(this).children('img').animate({height:'+='+resize},200);
                 });
-                
+
             });
 
             ibox.mouseleave(function() {
@@ -1255,7 +1257,7 @@ function loadFacetsContent(facetName, fsort, foffset, facetLimit, replaceFacets)
                     //console.log("label", label, facetName, el);
                     var fqParam = (el.fq) ? encodeURIComponent(el.fq) : facetName + ":" + ((encodeFq) ? encodeURIComponent(fqEsc) : fqEsc) ;
                     //var link = BC_CONF.searchString.replace("'", "&apos;") + "&fq=" + fqParam;
-                    
+
                     //NC: 2013-01-16 I changed the link so that the search string is uri encoded so that " characters do not cause issues 
                     //Problematic URL http://biocache.ala.org.au/occurrences/search?q=lsid:urn:lsid:biodiversity.org.au:afd.taxon:b76f8dcf-fabd-4e48-939c-fd3cafc1887a&fq=geospatial_kosher:true&fq=state:%22Australian%20Capital%20Territory%22
                     var link = BC_CONF.searchString + "&fq=" + fqParam;
