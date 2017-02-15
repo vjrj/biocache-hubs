@@ -38,9 +38,11 @@
             searchString: "${searchString}", //  JSTL var can contain double quotes // .encodeAsJavaScript()
             facetQueries: "${fqParams.encodeAsURL()}",
             facetDownloadQuery: "${searchString}${fqParamsSingleQ}",
+            maxFacets: "${grailsApplication.config.facets?.max?:'4'}",
             queryString: "${queryDisplay.encodeAsJavaScript()}",
             bieWebappUrl: "${grailsApplication.config.bie.baseUrl}",
             bieWebServiceUrl: "${grailsApplication.config.bieService.baseUrl}",
+            alertsUrl: "${grailsApplication.config.alerts.baseUrl}",
             biocacheServiceUrl: "${alatag.getBiocacheAjaxUrl()}",
             collectoryUrl: "${grailsApplication.config.collectory.baseUrl}",
             skin: "${grailsApplication.config.skin.layout}",
