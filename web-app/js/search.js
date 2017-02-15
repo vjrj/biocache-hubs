@@ -814,6 +814,7 @@ function removeFilter(el) {
  * Load all the charts
  */
 function loadAllCharts() {
+
     // set baseURls...
     baseFacetChart.biocacheServicesUrl = BC_CONF.biocacheServiceUrl;
     baseFacetChart.collectionsUrl = BC_CONF.collectoryUrl;
@@ -888,82 +889,79 @@ function loadImagesInTab() {
 }
 
 function loadImages(start) {
-    var preferredSpeciesImageListUrl = BC_CONF.getPreferredSpeciesListUrl; // + "/ws/speciesListItem/getPreferredSpeciesImage";
-    $.getJSON(preferredSpeciesImageListUrl, function(data) {
 
-        var preferredSpeciesImageList = data;
-
-        start = (start) ? start : 0;
-        var imagesJsonUri = BC_CONF.biocacheServiceUrl + "/occurrences/search.json" + BC_CONF.searchString +
-            "&fq=multimedia:Image&facet=false&pageSize=20&start=" + start + "&sort=identification_qualifier_s&dir=asc&callback=?";
-        $.getJSON(imagesJsonUri, function (data) {
-            //console.log("data",data);
-            if (data.occurrences) {
-                //var htmlUl = "";
-                if (start == 0) {
-                    $("#imagesGrid").html("");
-                }
-                var count = 0;
-                $.each(data.occurrences, function (i, el) {
-                    //console.log("el", el.image);
-                    count++;
-                    // clone template div & populate with metadata
-                    var $ImgConTmpl = $('.imgConTmpl').clone();
-                    $ImgConTmpl.removeClass('imgConTmpl').removeClass('hide');
-                    var link = $ImgConTmpl.find('a.cbLink');
-                    //link.attr('id','thumb_' + category + i);
-                    link.addClass('thumbImage tooltips');
-                    link.attr('href', BC_CONF.contextPath + "/occurrences/" + el.uuid);
-                    link.attr('title', 'click to enlarge');
-                    link.attr('data-occurrenceuid', el.uuid);
-                    link.attr('data-image-id', el.image);
-                    link.attr('scientific-name', el.raw_scientificName);
-                    link.attr('preferredImageStatus', false);
-                    for (i = 0; i < preferredSpeciesImageList.length; i++) {
-                        if (preferredSpeciesImageList[i].name == el.raw_scientificName &&
-                            preferredSpeciesImageList[i].imageId == el.image) {
-                            link.attr('preferredImageStatus', true);
-                            break;
-                        }
-                    }
-
-
-                    $ImgConTmpl.find('img').attr('src', el.smallImageUrl);
-                    // brief metadata
-                    var briefHtml = el.raw_scientificName;
-                    var br = "<br>";
-                    if (el.typeStatus) briefHtml += br + el.typeStatus;
-                    if (el.institutionName) briefHtml += ((el.typeStatus) ? ' | ' : br) + el.institutionName;
-                    $ImgConTmpl.find('.brief').html(briefHtml);
-                    // detail metadata
-                    var detailHtml = el.raw_scientificName;
-                    if (el.typeStatus) detailHtml += br + 'Type: ' + el.typeStatus;
-                    if (el.collector) detailHtml += br + 'By: ' + el.collector;
-                    if (el.eventDate) detailHtml += br + 'Date: ' + moment(el.eventDate).format('YYYY-MM-DD');
-                    if (el.institutionName) {
-                        detailHtml += br + el.institutionName;
-                    } else {
-                        detailHtml += br + el.dataResourceName;
-                    }
-                    $ImgConTmpl.find('.detail').html(detailHtml);
-
-                    // write to DOM
-                    $("#imagesGrid").append($ImgConTmpl.html());
-                });
-
-                if (count + start < data.totalRecords) {
-                    //console.log("load more", count, start, count + start, data.totalRecords);
-                    $('#imagesGrid').data('count', count + start);
-                    $("#loadMoreImages").show();
-                    $("#loadMoreImages .btn").removeClass('disabled');
-                } else {
-                    $("#loadMoreImages").hide();
-                }
-
+    start = (start) ? start : 0;
+    var imagesJsonUri = BC_CONF.biocacheServiceUrl + "/occurrences/search.json" + BC_CONF.searchString +
+        "&fq=multimedia:Image&facet=false&pageSize=20&start=" + start + "&sort=identification_qualifier_s&dir=asc&callback=?";
+    $.getJSON(imagesJsonUri, function (data) {
+        //console.log("data",data);
+        if (data.occurrences && data.occurrences.length > 0) {
+            //var htmlUl = "";
+            if (start == 0) {
+                $("#imagesGrid").html("");
             }
-        }).always(function () {
-            $("#loadMoreImages img").hide();
-        });
+            var count = 0;
+            $.each(data.occurrences, function (i, el) {
+                //console.log("el", el.image);
+                count++;
+                // clone template div & populate with metadata
+                var $ImgConTmpl = $('.imgConTmpl').clone();
+                $ImgConTmpl.removeClass('imgConTmpl').removeClass('hide');
+                var link = $ImgConTmpl.find('a.cbLink');
+                //link.attr('id','thumb_' + category + i);
+                link.addClass('thumbImage tooltips');
+                link.attr('href', BC_CONF.contextPath + "/occurrences/" + el.uuid);
+                link.attr('title', 'click to enlarge');
+                link.attr('data-occurrenceuid', el.uuid);
+                link.attr('data-image-id', el.image);
+                link.attr('scientific-name', el.raw_scientificName);
+                //link.attr('preferredImageStatus', false);
+                //for (i = 0; i < preferredSpeciesImageList.length; i++) {
+                //    if (preferredSpeciesImageList[i].name == el.raw_scientificName &&
+                //        preferredSpeciesImageList[i].imageId == el.image) {
+                //        link.attr('preferredImageStatus', true);
+                //        break;
+                //    }
+                //}
+
+
+                $ImgConTmpl.find('img').attr('src', el.smallImageUrl);
+                // brief metadata
+                var briefHtml = el.raw_scientificName;
+                var br = "<br>";
+                if (el.typeStatus) briefHtml += br + el.typeStatus;
+                if (el.institutionName) briefHtml += ((el.typeStatus) ? ' | ' : br) + el.institutionName;
+                $ImgConTmpl.find('.brief').html(briefHtml);
+                // detail metadata
+                var detailHtml = el.raw_scientificName;
+                if (el.typeStatus) detailHtml += br + 'Type: ' + el.typeStatus;
+                if (el.collector) detailHtml += br + 'By: ' + el.collector;
+                if (el.eventDate) detailHtml += br + 'Date: ' + moment(el.eventDate).format('YYYY-MM-DD');
+                if (el.institutionName) {
+                    detailHtml += br + el.institutionName;
+                } else {
+                    detailHtml += br + el.dataResourceName;
+                }
+                $ImgConTmpl.find('.detail').html(detailHtml);
+
+                // write to DOM
+                $("#imagesGrid").append($ImgConTmpl.html());
+            });
+
+            if (count + start < data.totalRecords) {
+                //console.log("load more", count, start, count + start, data.totalRecords);
+                $('#imagesGrid').data('count', count + start);
+                $("#loadMoreImages").show();
+                $("#loadMoreImages .btn").removeClass('disabled');
+            } else {
+                $("#loadMoreImages").hide();
+            }
+
+        } else {
+            $('#imagesGrid').html('<p>No images for the matched records</p>');
+        }
+    }).always(function () {
+        $("#loadMoreImages img").hide();
     });
 }
 
