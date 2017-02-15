@@ -68,6 +68,9 @@ images.metadataUrl = "http://images.ala.org.au/image/details?imageId="
 
 sightings.baseUrl = "http://sightings.ala.org.au"
 
+//whether to always show images tab or whether to only show in multimedia facet selected
+alwaysshow.imagetab = false
+
 // For sandbox environment
 //spatial.params = "&dynamic=true&ws=http%3A%2F%2Fsandbox.ala.org.au%2Fhubs-webapp&bs=http%3A%2F%2Fsandbox.ala.org.au%2Fbiocache-service"
 spatial.baseUrl = "http://spatial.ala.org.au/"
