@@ -86,6 +86,7 @@ exploreYourArea.lat = "-35.0"
 exploreYourArea.lng = "149.0"
 exploreYourArea.location = "Canberra, ACT"
 
+facets.defaultSelected = "data_resource_uid,taxon_name,year"
 facets.includeDynamicFacets = "false" // sandbox
 facets.limit = "100"
 facets.customOrder = ""
