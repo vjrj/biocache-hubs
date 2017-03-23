@@ -579,14 +579,13 @@ $(document).ready(function() {
     });
 
 
-    var imageId, attribution, recordUrl, scientificName, preferredImageStatus;
+    var imageId, attribution, recordUrl, scientificName;
     // Lightbox
     $(document).delegate('.thumbImage', 'click', function(event) {
         var recordLink = '<a href="RECORD_URL">View details of this record</a>'
         event.preventDefault();
         imageId = $(this).attr('data-image-id');
-        scientificName = $(this).attr('scientific-name');
-        preferredImageStatus = $(this).attr('preferredImageStatus');
+        scientificName = $(this).attr('data-scientific-name');
         attribution = $(this).find('.meta.detail').html();
         recordUrl = $(this).attr('href');
         recordLink = recordLink.replace('RECORD_URL', recordUrl);
@@ -598,9 +597,15 @@ $(document).ready(function() {
         $('#imageDialog').modal('show');
     });
 
+
     // show image only after modal dialog is shown. otherwise, image position will be off the viewing area.
     $('#imageDialog').on('shown.bs.modal',function () {
-        imgvwr.viewImage($("#viewerContainerId"), imageId, scientificName, preferredImageStatus, {
+        if($("#viewerContainerId").width() == 0){
+            //this is a workaround for #viewContainerId having width of zero, which results in the
+            //image not rendering
+            $("#viewerContainerId").width(($('#imageDialog').width() - 50));
+        }
+        imgvwr.viewImage($("#viewerContainerId"), imageId, scientificName, undefined, {
             imageServiceBaseUrl: BC_CONF.imageServiceBaseUrl,
             addSubImageToggle: false,
             addCalibration: false,
@@ -609,7 +614,6 @@ $(document).ready(function() {
             addAttribution: true,
             addLikeDislikeButton: BC_CONF.addLikeDislikeButton,
             addPreferenceButton: BC_CONF.addPreferenceButton,
-            preferredImageStatus: preferredImageStatus,
             attribution: attribution,
             disableLikeDislikeButton: BC_CONF.disableLikeDislikeButton,
             likeUrl: BC_CONF.likeUrl + '?id=' + imageId,
@@ -902,7 +906,6 @@ function loadImages(start) {
             }
             var count = 0;
             $.each(data.occurrences, function (i, el) {
-                //console.log("el", el.image);
                 count++;
                 // clone template div & populate with metadata
                 var $ImgConTmpl = $('.imgConTmpl').clone();
@@ -914,16 +917,7 @@ function loadImages(start) {
                 link.attr('title', 'click to enlarge');
                 link.attr('data-occurrenceuid', el.uuid);
                 link.attr('data-image-id', el.image);
-                link.attr('scientific-name', el.raw_scientificName);
-                //link.attr('preferredImageStatus', false);
-                //for (i = 0; i < preferredSpeciesImageList.length; i++) {
-                //    if (preferredSpeciesImageList[i].name == el.raw_scientificName &&
-                //        preferredSpeciesImageList[i].imageId == el.image) {
-                //        link.attr('preferredImageStatus', true);
-                //        break;
-                //    }
-                //}
-
+                link.attr('data-scientific-name', el.raw_scientificName);
 
                 $ImgConTmpl.find('img').attr('src', el.smallImageUrl);
                 // brief metadata
