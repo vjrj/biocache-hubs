@@ -119,3 +119,5 @@ suppressIssues = "" // "missingCoordinatePrecision"
 sensitiveDataset.list = ""
 
 table.displayDynamicProperties = false
+
+geocode.region = "AU"
