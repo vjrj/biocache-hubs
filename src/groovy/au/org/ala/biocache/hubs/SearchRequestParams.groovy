@@ -137,12 +137,11 @@ public class SearchRequestParams {
         StringBuilder req = new StringBuilder();
         if(qId != null){
             req.append("?q=qid:").append(qId);
-        } else {
+        } else if(q) {
             try{
                 req.append("?q=").append(URLEncoder.encode(q, "UTF-8"));
             } catch(UnsupportedEncodingException e){}
         }
-
 
         for(String f : fq){
             //only add the fq if it is not the query context
@@ -152,7 +151,7 @@ public class SearchRequestParams {
                 } catch(UnsupportedEncodingException e){}
         }
 
-        if(qc != ""){
+        if(qc){
             req.append("&qc=").append(URLEncoder.encode(qc, "UTF-8"));
         }
         return req.toString();

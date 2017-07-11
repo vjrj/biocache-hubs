@@ -34,6 +34,7 @@
             searchString: "${searchString}", //  JSTL var can contain double quotes // .encodeAsJavaScript()
             facetQueries: "${fqParams.encodeAsURL()}",
             facetDownloadQuery: "${searchString}${fqParamsSingleQ}",
+            maxFacets: "${grailsApplication.config.facets?.max?:'4'}",
             queryString: "${queryDisplay.encodeAsJavaScript()}",
             bieWebappUrl: "${grailsApplication.config.bie.baseUrl}",
             bieWebServiceUrl: "${grailsApplication.config.bieService.baseUrl}",
@@ -73,7 +74,6 @@
         <g:if test="${!grailsApplication.config.google.apikey}">
             google.load('maps','3.5',{ other_params: "sensor=false" });
         </g:if>
-        google.load("visualization", "1", {packages:["corechart"]});
     </script>
 </head>
 
@@ -99,14 +99,14 @@
         <div id="errorAlert" class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" onclick="$(this).parent().hide()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4>${flash.message}</h4>
-            <p>Please contact <a href="mailto:support@ala.org.au?subject=biocache error" style="text-decoration: underline;">support</a> if this error continues</p>
+            <p>Please contact <a href="mailto:${grailsApplication.config.supportEmail ?: 'support@ala.org.au'}?subject=biocache error" style="text-decoration: underline;">support</a> if this error continues</p>
         </div>
     </g:if>
     <g:if test="${errors}">
         <div class="searchInfo searchError">
             <h2 style="padding-left: 10px;"><g:message code="list.01.error" default="Error"/></h2>
             <h4>${errors}</h4>
-            Please contact <a href="mailto:support@ala.org.au?subject=biocache error">support</a> if this error continues
+            Please contact <a href="mailto:${grailsApplication.config.supportEmail ?: 'support@ala.org.au'}?subject=biocache error">support</a> if this error continues
         </div>
     </g:if>
     <g:elseif test="${!sr || sr.totalRecords == 0}">
@@ -166,16 +166,6 @@
                                     </div>
                                 </g:if>
                             </g:each>
-                            %{--<g:if test="${dynamicFacets}">--}%
-                                %{--<div class="facetsColumn">--}%
-                                    %{--<div class="facetGroupName"><g:message code="list.facetcheckboxes.div02.title" default="Custom facets"/></div>--}%
-                                    %{--<g:each var="facet" in="${dynamicFacets}">--}%
-                                        %{--<input type="checkbox" name="facets" class="facetOpts" value="${facet.name}"--}%
-                                            %{--${(facet.name) ? 'checked="checked"' : ''}>&nbsp;${facet.displayName}--}%
-                                        %{--<br/>--}%
-                                    %{--</g:each>--}%
-                                %{--</div>--}%
-                            %{--</g:if>--}%
                         </div>
                     </div>
                 </div>
@@ -262,7 +252,7 @@
             </div>
             <g:set var="postFacets" value="${System.currentTimeMillis()}"/>
             <div id="content2" class="span9">
-                <g:if test="${grailsApplication.config.skin.useAlaSpatialPortal?.toBoolean()}">
+                <g:if test="${grailsApplication.config.alerts.baseUrl}">
                     <div id="alert" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="alertLabel" aria-hidden="true">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -283,7 +273,6 @@
                         </div>
                         <div class="modal-footer">
                             <button class="btn" data-dismiss="modal" aria-hidden="true"><g:message code="list.alert.button01" default="Close"/></button>
-                            %{--<button class="btn btn-primary">Save changes</button>--}%
                         </div>
                     </div><!-- /#alerts -->
                 </g:if>
@@ -323,7 +312,7 @@
                                                 code="list.downloads.navigator" default="Downloads"/></a>
                                     </div>
                                 </g:if>
-                                <g:if test="${grailsApplication.config.skin.useAlaSpatialPortal?.toBoolean()}">
+                                <g:if test="${grailsApplication.config.alerts.baseUrl}">
                                     <div id="alerts" class="btn btn-small">
                                         <a href="#alert" role="button" data-toggle="modal" class="tooltips" title="Get email alerts for this search"><i class="fa fa-bell"></i>&nbsp;&nbsp;<g:message code="list.alerts.navigator" default="Alerts"/></a>
                                     </div>

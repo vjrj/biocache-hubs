@@ -183,15 +183,16 @@ $(document).ready(function() {
         });
 
         //Check user has selected at least 1 facet
-        if (selectedFacets.length > 0) {
+        if (selectedFacets.length > 0 && selectedFacets.length  <= BC_CONF.maxFacets) {
             // save facets to the user_facets cookie
             $.cookie("user_facets", selectedFacets, { expires: 7 });
             // reload page
             document.location.reload(true);
+        } else if (selectedFacets.length > BC_CONF.maxFacets) {
+            alert("Please select " + BC_CONF.maxFacets + " or less filter categories to display");
         } else {
             alert("Please select at least 1 filter category to display");
         }
-
     });
 
     // reset facet options to default values (clear cookie)
@@ -392,7 +393,7 @@ $(document).ready(function() {
     $("#downloadFacet").live("click", function(e) {
         var facetName = $("table#fullFacets").data("facet");
         console.log('clicked ' + window.location.href );
-        window.location.href = BC_CONF.biocacheServiceUrl + "/occurrences/facets/download" + BC_CONF.facetDownloadQuery + '&facets=' + facetName + '&count=true';
+        window.location.href = BC_CONF.biocacheServiceUrl + "/occurrences/facets/download" + BC_CONF.facetDownloadQuery + '&facets=' + facetName + '&count=true&lookup=true';
     });
 
     // form validation for form#facetRefineForm
@@ -928,7 +929,7 @@ function loadImages(start) {
             "&fq=multimedia:Image&facet=false&pageSize=20&start=" + start + "&sort=identification_qualifier_s&dir=asc&callback=?";
         $.getJSON(imagesJsonUri, function (data) {
             //console.log("data",data);
-            if (data.occurrences) {
+            if (data.occurrences && data.occurrences.length > 0) {
                 //var htmlUl = "";
                 if (start == 0) {
                     $("#imagesGrid").html("");
@@ -981,6 +982,8 @@ function loadImages(start) {
                     $("#loadMoreImages").hide();
                 }
     
+            } else {
+                $('#imagesGrid').html('<p>' + jQuery.i18n.prop('list.noimages.available') + '</p>');
             }
         }).always(function () {
             $("#loadMoreImages img").hide();
