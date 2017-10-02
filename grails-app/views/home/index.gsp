@@ -28,7 +28,7 @@
     <g:if test="${grailsApplication.config.skin.useAlaBie?.toBoolean()}">
         <r:require module="bieAutocomplete"/>
     </g:if>
-    <r:script>
+    <r:script disposition="head">
         // global var for GSP tags/vars to be passed into JS functions
         var BC_CONF = {
             biocacheServiceUrl: "${alatag.getBiocacheAjaxUrl()}",
@@ -52,6 +52,10 @@
          mode: 'map',
          language: BC_CONF.locale
         });
+
+    </r:script>
+    <r:script>
+
         $(document).ready(function() {
 
             var mapInit = false;
