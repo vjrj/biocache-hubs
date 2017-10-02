@@ -27,7 +27,7 @@
     <g:if test="${grailsApplication.config.skin.useAlaBie?.toBoolean()}">
         <r:require module="bieAutocomplete"/>
     </g:if>
-    <script type="text/javascript">
+    <r:script disposition="head">
         // single global var for app conf settings
         <g:set var="fqParamsSingleQ" value="${(params.fq) ? ' AND ' + params.list('fq')?.join(' AND ') : ''}"/>
         <g:set var="fqParams" value="${(params.fq) ? "&fq=" + params.list('fq')?.join('&fq=') : ''}"/>
@@ -69,7 +69,9 @@
             savePreferredSpeciesListUrl: "${createLink(controller: 'imageClient', action: 'saveImageToSpeciesList')}",
             getPreferredSpeciesListUrl: "${createLink(controller: 'imageClient', action: 'getPreferredSpeciesImageList')}"
         };
+    </r:script>
 
+    <script>
         google.load("visualization", "1", {packages:["corechart"]});
     </script>
 </head>
