@@ -24,7 +24,7 @@
     <g:else>
         <script src="https://maps.google.com/maps/api/js?v=3.5&sensor=false"></script>
     </g:else>
-    <r:require modules="jquery, leaflet, leafletPlugins, mapCommon, searchMap, bootstrapCombobox"/>
+    <r:require modules="jquery, jquery_i18n, leaflet, leafletPlugins, mapCommon, searchMap, bootstrapCombobox"/>
     <g:if test="${grailsApplication.config.skin.useAlaBie?.toBoolean()}">
         <r:require module="bieAutocomplete"/>
     </g:if>
