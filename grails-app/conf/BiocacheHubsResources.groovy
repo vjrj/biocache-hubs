@@ -91,6 +91,7 @@ modules = {
         resource url:[dir:'js/leaflet-plugins/wicket', file:'wicket.js', plugin:'biocache-hubs']
         resource url:[dir:'js/leaflet-plugins/wicket', file:'wicket-leaflet.js', plugin:'biocache-hubs']
         resource url:[dir:'js', file:'LeafletToWKT.js', plugin:'biocache-hubs']
+        resource url:[dir:'js', file:'wicket-world-wrap-fix.js', plugin:'biocache-hubs']
     }
 
     mapCommon {
