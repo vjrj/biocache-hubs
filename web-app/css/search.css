@@ -941,6 +941,10 @@ span.red {
     margin: 0;
 }
 
+a.leaflet-control-zoom-fullscreen + a.leaflet-control-zoom-fullscreen {
+    display: none;
+}
+
 /* Gallery styling */
 .imgCon {
     display: inline-block;
