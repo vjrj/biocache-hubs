@@ -514,7 +514,7 @@ a.colour-by-legend-toggle {
         MAP_VAR.recordList = new Array(); // store list of records for popup
 
         //MAP_VAR.map.on('click', pointLookupClickRegister);
-        if (MAP_VAR.map === undefined) {
+        if (obj === undefined) {
             MAP_VAR.map.addHandler('paramArea', L.PointClickHandler.extend({obj: MAP_VAR.map}));
             MAP_VAR.map.paramArea.enable();
         }
