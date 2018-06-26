@@ -8,6 +8,7 @@ branches:
   - data-quality
   - hotfix
   - 1.1-maintainence
+  - grails2-prod-2018
 before_install:
  - wget -q https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/ala_common.sh
  - chmod +x ala_common.sh
