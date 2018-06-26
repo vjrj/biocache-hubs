@@ -19,7 +19,7 @@
     <title><g:message code="home.index.title" default="Search for records"/> | ${hubDisplayName}</title>
 
     <g:if test="${grailsApplication.config.google.apikey}">
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=${grailsApplication.config.google.apikey}" type="text/javascript"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=${grailsApplication.config.google.apikey}" type="text/javascript"></script>
     </g:if>
     <g:else>
         <script src="https://maps.google.com/maps/api/js?v=3.5&sensor=false"></script>
