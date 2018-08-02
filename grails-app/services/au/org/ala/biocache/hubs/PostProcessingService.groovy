@@ -119,7 +119,7 @@ class PostProcessingService {
         if (record.processed[layerType]) {
             record.processed[layerType].each {
                 String key = it.key.trim()
-                String value = it.value.trim()
+                def value = it.value
 
                 if (layersMetaData.containsKey(key)) {
                     Map metaMap = layersMetaData.get(key)
