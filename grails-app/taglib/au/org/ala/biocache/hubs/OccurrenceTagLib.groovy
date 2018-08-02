@@ -452,6 +452,20 @@ class OccurrenceTagLib {
     }
 
     /**
+     * Get the DRUID
+     *
+     * @attr uuid REQUIRED the record object (JsonObject)
+     */
+    def getDruid = { attrs ->
+        def uuid = attrs.uuid
+
+        def record = webServicesService.getRecord(uuid, false)
+        def druid = record?.raw?.attribution?.dataResourceUid
+
+        out << druid
+    }
+
+    /**
      * Generate an occurrence table row
      *
      * @attr fieldName REQUIRED

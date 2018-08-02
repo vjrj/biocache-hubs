@@ -45,7 +45,7 @@
             userId: "${userId}",
             userDisplayName: "${userDisplayName}",
             contextPath: "${request.contextPath}",
-            recordUuid: "${record.raw.uuid}",
+            recordUuid: "${record.raw.rowKey}",
             taxonRank: "${record.processed.classification.taxonRank}",
             taxonConceptID: "${record.processed.classification.taxonConceptID}",
             isUnderCas: ${isUnderCas},
@@ -85,7 +85,6 @@
 
 </head>
 <body class="occurrence-record">
-    %{--<g:set var="json" value="${request.contextPath}/occurrences/${record?.raw?.uuid}.json" />--}%
     <g:if test="${record}">
         <g:if test="${record.raw}">
             <div class="recordHeader clearfix" id="headingBar">
@@ -410,27 +409,26 @@
                             <g:message code="show.inferredoccurrencedetails.p03" default="More information about the duplication detection methods and terminology in use is available here"/>:
                             <ul>
                                 <li>
-                                <a href="https://github.com/AtlasOfLivingAustralia/ala-dataquality/wiki/INFERRED_DUPLICATE_RECORD">https://github.com/AtlasOfLivingAustralia/ala-dataquality/wiki/INFERRED_DUPLICATE_RECORD</a>
+                                    <a href="https://github.com/AtlasOfLivingAustralia/ala-dataquality/wiki/INFERRED_DUPLICATE_RECORD">https://github.com/AtlasOfLivingAustralia/ala-dataquality/wiki/INFERRED_DUPLICATE_RECORD</a>
                                 </li>
                             </ul>
                         </p>
                         <g:if test="${duplicateRecordDetails && duplicateRecordDetails.duplicates?.size() > 0}">
-                            <table class="duplicationTable table-striped table-bordered table-condensed" style="border-bottom:none;">
+                            <table class="duplicationTable table table-striped table-bordered table-condensed" style="border-bottom:none;">
                                 <tr class="sectionName"><td colspan="4"><g:message code="show.table01.title" default="Representative Record"/></td></tr>
                                 <g:if test="${duplicateRecordDetails.uuid}">
                                     <alatag:occurrenceTableRow
                                             annotate="false"
                                             section="duplicate"
                                             fieldName="Record UUID">
-                                    <a href="${request.contextPath}/occurrences/${duplicateRecordDetails.uuid}">${duplicateRecordDetails.uuid}</a></alatag:occurrenceTableRow>
-                                </g:if>
-                                <g:if test="${duplicateRecordDetails.rowKey}">
+                                        <a href="${request.contextPath}/occurrences/${duplicateRecordDetails.uuid}">${duplicateRecordDetails.uuid}</a></alatag:occurrenceTableRow>
+
                                     <alatag:occurrenceTableRow
                                             annotate="false"
                                             section="duplicate"
                                             fieldName="Data Resource">
-                                    <g:set var="dr">${duplicateRecordDetails.rowKey?.substring(0, duplicateRecordDetails.rowKey?.indexOf("|"))}</g:set>
-                                    <a href="${collectionsWebappContext}/public/show/${dr}">${dataResourceCodes?.get(dr)}</a>
+                                        <g:set var="dr"><alatag:getDruid uuid="${duplicateRecordDetails.uuid}"/></g:set>
+                                        <a href="${collectionsWebappContext}/public/show/${dr}">${dataResourceCodes?.get(dr)}</a>
                                     </alatag:occurrenceTableRow>
                                 </g:if>
                                 <g:if test="${duplicateRecordDetails.rawScientificName}">
@@ -445,102 +443,101 @@
                                             annotate="false"
                                             section="duplicate"
                                             fieldName="Coordinates">
-                                    ${duplicateRecordDetails.latLong}</alatag:occurrenceTableRow>
+                                        ${duplicateRecordDetails.latLong}</alatag:occurrenceTableRow>
                                 </g:if>
                                 <g:if test="${duplicateRecordDetails.collector }">
-                                        <alatag:occurrenceTableRow
+                                    <alatag:occurrenceTableRow
                                             annotate="false"
                                             section="duplicate"
                                             fieldName="Collector">
-                                    ${duplicateRecordDetails.collector}</alatag:occurrenceTableRow>
+                                        ${duplicateRecordDetails.collector}</alatag:occurrenceTableRow>
                                 </g:if>
                                 <g:if test="${duplicateRecordDetails.year }">
                                     <alatag:occurrenceTableRow
-                                        annotate="false"
-                                        section="duplicate"
-                                        fieldName="Year">
-                                ${duplicateRecordDetails.year}</alatag:occurrenceTableRow>
+                                            annotate="false"
+                                            section="duplicate"
+                                            fieldName="Year">
+                                        ${duplicateRecordDetails.year}</alatag:occurrenceTableRow>
                                 </g:if>
                                 <g:if test="${duplicateRecordDetails.month }">
                                     <alatag:occurrenceTableRow
-                                        annotate="false"
-                                        section="duplicate"
-                                        fieldName="Month">
-                                ${duplicateRecordDetails.month}</alatag:occurrenceTableRow>
+                                            annotate="false"
+                                            section="duplicate"
+                                            fieldName="Month">
+                                        ${duplicateRecordDetails.month}</alatag:occurrenceTableRow>
                                 </g:if>
                                 <g:if test="${duplicateRecordDetails.day }">
                                     <alatag:occurrenceTableRow
-                                        annotate="false"
-                                        section="duplicate"
-                                        fieldName="Day">
-                                ${duplicateRecordDetails.day}</alatag:occurrenceTableRow>
+                                            annotate="false"
+                                            section="duplicate"
+                                            fieldName="Day">
+                                        ${duplicateRecordDetails.day}</alatag:occurrenceTableRow>
                                 </g:if>
-                                <!-- Loop through all the duplicate records -->
+                            <!-- Loop through all the duplicate records -->
                                 <tr class="sectionName"><td colspan="4"><g:message code="show.table02.title" default="Related records"/></td></tr>
                                 <g:each in="${duplicateRecordDetails.duplicates }" var="dup">
                                     <g:if test="${dup.uuid}">
                                         <alatag:occurrenceTableRow
-                                            annotate="false"
-                                            section="duplicate"
-                                            fieldName="Record UUID">
-                                        <a href="${request.contextPath}/occurrences/${dup.uuid}">${dup.uuid}</a></alatag:occurrenceTableRow>
-                                    </g:if>
-                                    <g:if test="${dup.rowKey}">
+                                                annotate="false"
+                                                section="duplicate"
+                                                fieldName="Record UUID">
+                                            <a href="${request.contextPath}/occurrences/${dup.uuid}">${dup.uuid}</a></alatag:occurrenceTableRow>
+
                                         <alatag:occurrenceTableRow
                                                 annotate="false"
                                                 section="duplicate"
                                                 fieldName="Data Resource">
-                                            <g:set var="dr">${dup.rowKey.substring(0, dup.rowKey.indexOf("|"))}</g:set>
+                                            <g:set var="dr"><alatag:getDruid uuid="${dup.uuid}"/></g:set>
                                             <a href="${collectionsWebappContext}/public/show/${dr}">${dataResourceCodes?.get(dr)}</a>
                                         </alatag:occurrenceTableRow>
                                     </g:if>
                                     <g:if test="${dup.rawScientificName}">
                                         <alatag:occurrenceTableRow
-                                            annotate="false"
-                                            section="duplicate"
-                                            fieldName="Raw Scientific Name">
-                                        ${dup.rawScientificName}</alatag:occurrenceTableRow>
+                                                annotate="false"
+                                                section="duplicate"
+                                                fieldName="Raw Scientific Name">
+                                            ${dup.rawScientificName}</alatag:occurrenceTableRow>
                                     </g:if>
                                     <g:if test="${dup.latLong}">
                                         <alatag:occurrenceTableRow
                                                 annotate="false"
                                                 section="duplicate"
                                                 fieldName="Coordinates">
-                                        ${dup.latLong}</alatag:occurrenceTableRow>
+                                            ${dup.latLong}</alatag:occurrenceTableRow>
                                     </g:if>
-                                     <g:if test="${dup.collector }">
+                                    <g:if test="${dup.collector }">
                                         <alatag:occurrenceTableRow
-                                            annotate="false"
-                                            section="duplicate"
-                                            fieldName="Collector">
-                                        ${dup.collector}</alatag:occurrenceTableRow>
+                                                annotate="false"
+                                                section="duplicate"
+                                                fieldName="Collector">
+                                            ${dup.collector}</alatag:occurrenceTableRow>
                                     </g:if>
                                     <g:if test="${dup.year }">
                                         <alatag:occurrenceTableRow
-                                            annotate="false"
-                                            section="duplicate"
-                                            fieldName="Year">
-                                        ${dup.year}</alatag:occurrenceTableRow>
+                                                annotate="false"
+                                                section="duplicate"
+                                                fieldName="Year">
+                                            ${dup.year}</alatag:occurrenceTableRow>
                                     </g:if>
                                     <g:if test="${dup.month }">
                                         <alatag:occurrenceTableRow
-                                            annotate="false"
-                                            section="duplicate"
-                                            fieldName="Month">
-                                        ${dup.month}</alatag:occurrenceTableRow>
+                                                annotate="false"
+                                                section="duplicate"
+                                                fieldName="Month">
+                                            ${dup.month}</alatag:occurrenceTableRow>
                                     </g:if>
                                     <g:if test="${dup.day }">
                                         <alatag:occurrenceTableRow
-                                            annotate="false"
-                                            section="duplicate"
-                                            fieldName="Day">
-                                        ${dup.day}</alatag:occurrenceTableRow>
+                                                annotate="false"
+                                                section="duplicate"
+                                                fieldName="Day">
+                                            ${dup.day}</alatag:occurrenceTableRow>
                                     </g:if>
                                     <g:if test="${dup.dupTypes }">
                                         <alatag:occurrenceTableRow
-                                            annotate="false"
-                                            section="duplicate"
-                                            fieldName="Comments">
+                                                annotate="false"
+                                                section="duplicate"
+                                                fieldName="Comments">
                                             <g:each in="${dup.dupTypes }" var="dupType">
                                                 <g:if test="${dupType.id }">
                                                     <g:message code="duplication.${dupType.id}"/>
