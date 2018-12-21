@@ -17,6 +17,10 @@
 /*
  * // require jquery
 //= require purl.js
+//= require leaflet/leaflet.js
+//= require leaflet-plugins/layer/tile/Google.js
+//= require leaflet-plugins/spin/spin.min.js
+//= require leaflet-plugins/spin/leaflet.spin.js
 //= require magellan.js
 //= require jquery.qtip.min.js
 //= require_self
@@ -246,6 +250,7 @@ function initialize() {
     loadMap();
     loadGroups();
 }
+
 /**
  * Google map API v3
  */
@@ -330,6 +335,70 @@ function loadMap() {
         //$('#taxa-level-0 tbody td:first').click(); // click on "all species" group
         loadRecordsLayer();
     }
+}
+
+function loadLeafletMap() {
+    var latLng = L.latLng($('#latitude').val(), $('#longitude').val());
+
+    map = L.map('mapCanvas', {
+        center: latLng,
+        zoom: EYA_CONF.zoom,
+        scrollWheelZoom: false
+    });
+
+    marker = L.marker(latLng, {
+        title: 'Marker Location',
+        draggable: true
+    }).addTo(map);
+
+    markerInfowindow = marker.bindPopup('<div class="infoWindow">marker address</div>');
+
+    marker.on('click', function(event) {
+        if (lastInfoWindow) lastInfoWindow.close();
+        markerInfowindow.setPosition(event.latLng);
+        markerInfowindow.open(map, marker);
+        lastInfoWindow = markerInfowindow;
+    });
+
+    // Add a Circle overlay to the map.
+    var radius = parseInt($('select#radius').val()) * 1010;
+    var circlProps = {
+        radius: radius,
+        stroke: true,
+        weight: 1,
+        color: 'white',
+        opacity: 0.5,
+        fillColor: '#222', // '#2C48A6'
+        fillOpacity: 0.2,
+        zIndex: -10
+    }
+    circle = L.circle(latLng, circlProps).addTo(map);
+
+    // bind circle to marker
+    marker.on('dragend', function(e){
+        var coords = e.target.getLatLng();
+        var lat = coords.lat;
+        var lon = coords.lng;
+        map.panTo({lon:lon,lat:lat})
+        map.removeLayer(circle);
+        circle = L.circle([lat,lon],circlProps).addTo(map);
+
+        geocodePosition(marker.getPosition());
+        loadGroups();
+    });
+
+    // Update current position info.
+    geocodePosition(new google.maps.LatLng(latLng.lat, latLng.lng));
+
+    map.on('zoomend', function() {
+        loadRecordsLayer();
+    });
+
+    if (!points || points.length == 0) {
+        //$('#taxa-level-0 tbody td:first').click(); // click on "all species" group
+        loadRecordsLayer();
+    }
+
 }
 
 /**
